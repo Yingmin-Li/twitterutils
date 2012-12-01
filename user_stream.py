@@ -9,7 +9,8 @@ import settings
 class CouchDBStreamListener(StreamListener):
     def __init__(self, db):
         self.db = db
-        self.tweet_count = -1
+        self.tweet_count = 0
+        self.received_friend_ids = False
 
     def on_data(self, data):
         try:
@@ -27,9 +28,9 @@ class CouchDBStreamListener(StreamListener):
                 self.db["tweet:%d" % tweet['id']] = tweet
 
                 self.tweet_count += 1
-            elif self.tweet_count == -1 and tweet.has_key("friends"):
+            elif not self.received_friend_ids and tweet.has_key("friends"):
                 print("Got %d user ids" % len(tweet['friends']))
-                self.tweet_count = 0
+                self.received_friend_ids = True
             else:
                 print("Received a responce that is not a tweet")
                 print tweet
