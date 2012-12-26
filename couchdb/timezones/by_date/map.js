@@ -6,6 +6,6 @@ function(doc) {
                d.getHours(), d.getMinutes(), d.getSeconds(),
                doc.user.time_zone];
 
-    emit(key, doc.id);
+    emit(key, doc._id);
   }
 }
