@@ -44,8 +44,7 @@ def main():
     timezones = defaultdict(int)
 
     for row in db.view("timezones/by_date", start_key=start_date, end_key=end_date):
-        timezone = row.key[-1]
-        timezones[timezone] += 1
+        timezones[row.value['timezone']] += 1
 
     sorted_timezones = sorted(timezones.items(), key=lambda x: x[1], reverse=True)
     
