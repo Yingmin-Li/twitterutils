@@ -2,6 +2,7 @@ from collections import defaultdict
 from argparse import ArgumentParser
 
 from couchdb import Server
+from matplotlib import pyplot
 
 from twitterutils.date_utils import parse_date_string
 import settings
@@ -14,6 +15,9 @@ def get_arguments():
 
     parser.add_argument("--end", action="store", dest="end", nargs="?",
                         help="End date")
+
+    parser.add_argument("--top", type=int, default=10, action="store", dest="top",
+                        help="The maximum number of timezones to display")
 
     return parser.parse_args()
 
@@ -48,8 +52,20 @@ def main():
 
     sorted_timezones = sorted(timezones.items(), key=lambda x: x[1], reverse=True)
     
-    for timezone, count in sorted_timezones:
-        print timezone, count
+    top_timezones, rest_timezones = sorted_timezones[:args.top], sorted_timezones[args.top:]
+    
+    counts = [timezone[1] for timezone in top_timezones]
+    labels = [timezone[0] for timezone in top_timezones]
+
+    rest_sum = sum([timezone[1] for timezone in rest_timezones])
+    counts.append(rest_sum)
+
+    labels.append("Other")
+
+    pyplot.barh(range(len(counts)), counts, align="center")
+    pyplot.yticks(range(len(counts)), labels)
+    pyplot.tight_layout()
+    pyplot.show()
 
 if __name__ == "__main__":
     main()
